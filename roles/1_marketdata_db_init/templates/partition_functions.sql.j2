@@ -1,5 +1,3 @@
-connect {{ postgres_db }}
-
 -- Partition maintenance functions.
 -- Used by a microservice that connects as `partition_manager` and calls these functions.
 -- Functions are SECURITY DEFINER and owned by the parent table owner (postgres).
@@ -14,9 +12,9 @@ AS $$
 BEGIN
   -- Allow-list only our parent tables
   IF p_parent NOT IN (
-    '{{ candles }}'regclass,
-    '{{ orderbooks }}'regclass,
-    '{{ trades }}'regclass
+    '{{ candles }}'::regclass,
+    '{{ orderbooks }}'::regclass,
+    '{{ trades }}'::regclass
   ) THEN
     RAISE EXCEPTION 'Partitioning is not allowed for %', p_parent;
   END IF;
@@ -24,14 +22,15 @@ BEGIN
   -- Create partition name parent_YYYYMMDD (e.g., btc_trades_20260103)
   EXECUTE format(
     'CREATE TABLE IF NOT EXISTS %I.%I_%s PARTITION OF %s FOR VALUES FROM (%L) TO (%L)',
-    split_part(p_parenttext, '.', 1),
-    split_part(p_parenttext, '.', 2),
+    split_part(p_parent::text, '.', 1),
+    split_part(p_parent::text, '.', 2),
     to_char(p_day, 'YYYYMMDD'),
     p_parent,
-    p_daytimestamp,
-    (p_day + 1)timestamp
+    p_day::timestamp,
+    (p_day + 1)::timestamp
   );
-END $$;
+END
+$$;
 
 -- Drop partitions older than the specified day (strictly before p_before)
 CREATE OR REPLACE FUNCTION {{ exchange }}.drop_partitions_older_than(p_parent regclass, p_before date)
@@ -42,15 +41,15 @@ SET search_path = {{ exchange }}, pg_catalog
 AS $$
 DECLARE
   r record;
-  dropped int = 0;
+  dropped int := 0;
   suffix text;
   part_day date;
 BEGIN
   -- Allow-list only our parent tables
   IF p_parent NOT IN (
-    '{{ candles }}'regclass,
-    '{{ orderbooks }}'regclass,
-    '{{ trades }}'regclass
+    '{{ candles }}'::regclass,
+    '{{ orderbooks }}'::regclass,
+    '{{ trades }}'::regclass
   ) THEN
     RAISE EXCEPTION 'Dropping is not allowed for %', p_parent;
   END IF;
@@ -63,20 +62,21 @@ BEGIN
     JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE i.inhparent = p_parent
   LOOP
-    suffix = substring(r.relname from '(d{8})$');
+    suffix := substring(r.relname from '([0-9]{8})$');
     IF suffix IS NULL THEN
       CONTINUE;
     END IF;
 
-    part_day = to_date(suffix, 'YYYYMMDD');
-    IF part_day  p_before THEN
+    part_day := to_date(suffix, 'YYYYMMDD');
+    IF part_day < p_before THEN
       EXECUTE format('DROP TABLE IF EXISTS %I.%I', r.nspname, r.relname);
-      dropped = dropped + 1;
+      dropped := dropped + 1;
     END IF;
   END LOOP;
 
   RETURN dropped;
-END $$;
+END
+$$;
 
 -- Lock down function access
 REVOKE ALL ON FUNCTION {{ exchange }}.create_daily_partition(regclass, date) FROM PUBLIC;
