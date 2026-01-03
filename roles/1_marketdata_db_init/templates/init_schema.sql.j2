@@ -51,7 +51,8 @@ CREATE TABLE IF NOT EXISTS {{ trades }} (
 
 -- ====== Indexes for trades ======
 -- For all new partitions, the index is created automatically if you create it on the parent table.
-CREATE INDEX IF NOT EXISTS {{ trades_index }} ON {{ trades }} (timestamp);
+CREATE INDEX IF NOT EXISTS {{ exchange }}.{{ trades_index }} ON {{ trades }} (timestamp);
+
 
 -- ====== Create users ======
 DO $$
