@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS {{ trades }} (
 
 -- ====== Indexes for trades ======
 -- For all new partitions, the index is created automatically if you create it on the parent table.
-CREATE INDEX IF NOT EXISTS {{ exchange }}.{{ trades_index }} ON {{ trades }} (timestamp);
+CREATE INDEX IF NOT EXISTS {{ trades_index }} ON {{ trades }} (timestamp);
 
 
 -- ====== Create users ======
@@ -61,36 +61,36 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'collector') THEN
     CREATE ROLE collector LOGIN
       NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION
-      PASSWORD '{{ collector_password | replace("'", "''") }}';
+      PASSWORD '{{ vault_collector_password }}';
   ELSE
-    ALTER ROLE collector WITH PASSWORD '{{ collector_password | replace("'", "''") }}';
+    ALTER ROLE collector WITH PASSWORD '{{ vault_collector_password }}';
   END IF;
 
   -- analyst
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'analyst') THEN
     CREATE ROLE analyst LOGIN
       NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION
-      PASSWORD '{{ analyst_password | replace("'", "''") }}';
+      PASSWORD '{{ vault_analyst_password }}';
   ELSE
-    ALTER ROLE analyst WITH PASSWORD '{{ analyst_password | replace("'", "''") }}';
+    ALTER ROLE analyst WITH PASSWORD '{{ vault_analyst_password }}';
   END IF;
 
   -- partition_manager
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'partition_manager') THEN
     CREATE ROLE partition_manager LOGIN
       NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION
-      PASSWORD '{{ partition_manager_password | replace("'", "''") }}';
+      PASSWORD '{{ vault_partition_manager_password }}';
   ELSE
-    ALTER ROLE partition_manager WITH PASSWORD '{{ partition_manager_password | replace("'", "''") }}';
+    ALTER ROLE partition_manager WITH PASSWORD '{{ vault_partition_manager_password }}';
   END IF;
 
   -- reader
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'reader') THEN
     CREATE ROLE reader LOGIN
       NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION
-      PASSWORD '{{ reader_password | replace("'", "''") }}';
+      PASSWORD '{{ vault_reader_password }}';
   ELSE
-    ALTER ROLE reader WITH PASSWORD '{{ reader_password | replace("'", "''") }}';
+    ALTER ROLE reader WITH PASSWORD '{{ vault_reader_password }}';
   END IF;
 END
 $$;

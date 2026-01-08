@@ -1,10 +1,11 @@
+postgres_user: postgres
+postgres_db: marketdata
 pg_version: 15
 pg_cluster: main
 
 pg_conf_dir: "/etc/postgresql/{{ pg_version }}/{{ pg_cluster }}"
-pg_conf_file: "{{ pg_conf_dir }}/postgresql.conf"
-
-postgres_db: marketdata
+pg_conf_d_dir: "{{ pg_conf_dir }}/conf.d"
+pg_tuning_file: "{{ pg_conf_d_dir }}/marketdata.conf"
 
 # Memory
 pg_shared_buffers: "1536MB"

@@ -1,5 +1,5 @@
 # Marketdata PostgreSQL Blueprint (Ansible)
-Infrastructure-as-Code blueprint that provisions **PostgreSQL 16** and bootstraps a **marketdata** database for exchange feeds (candles / orderbooks / trades), using **daily range partitioning** and a hardened access model (**localhost-only + SSH tunneling**).
+Infrastructure-as-Code blueprint that provisions **PostgreSQL 15** and bootstraps a **marketdata** database for exchange feeds (candles / orderbooks / trades), using **daily range partitioning** and a hardened access model (**localhost-only + SSH tunneling**).
 
 ## What it solves
 Provides a reproducible foundation for marketdata storage: baseline PostgreSQL tuning, opinionated roles for services (collector/analyst/partition_manager/reader), and safe partition lifecycle management (create + retention) via **SECURITY DEFINER** functions with allow-listing.
@@ -7,7 +7,7 @@ Provides a reproducible foundation for marketdata storage: baseline PostgreSQL t
 ## What’s inside
 ### 1) PostgreSQL provisioning (`0_postgres_bootstrap`)
 - Installs:
-  - `postgresql-16`, `postgresql-client-16`
+  - `postgresql-15`, `postgresql-client-15`
   - `python3-psycopg2` (required by `community.postgresql` Ansible modules)
 - Renders `postgresql.conf` with baseline tuning:
   - memory (`shared_buffers`, `work_mem`, `maintenance_work_mem`)
