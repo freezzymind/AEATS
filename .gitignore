@@ -1,8 +1,6 @@
 /cluster_services
 /external_access
-/k8s&network_hardening
 /microservices
-questions.txt
 
 # marketdata-pg-blueprint ignores
 /marketdata-pg-blueprint/inventory/group_vars/db/vault.yml
