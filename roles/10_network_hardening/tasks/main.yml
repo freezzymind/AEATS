@@ -80,6 +80,12 @@
   register: sysctl_apply
   changed_when: "'Reloading' in sysctl_apply.stdout"
 
+- name: Install nftables 
+  ansible.builtin.apt: 
+    name: nftables 
+    state: present 
+    update_cache: yes
+
 - name: Enable nftables backend (required for UFW on Debian 12)
   ansible.builtin.systemd:
     name: nftables
