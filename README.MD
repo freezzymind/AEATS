@@ -42,17 +42,16 @@ playbook.yml runs on hosts: master in this order:
 ## 0_setup_internal_interface — Internal dummy interface for API addressing
 
 ### What it does:
-Enables and starts systemd-networkd
-Creates a dummy interface kubeint0
-Assigns 10.200.0.1/32 to kubeint0
-Adds a blackhole route for 10.200.0.0/24
-Installs and enables a systemd oneshot service to persist route:
-ip route add 10.200.0.1 dev kubeint0
+- Enables and starts systemd-networkd
+- Creates a dummy interface kubeint0
+- Assigns 10.200.0.1/32 to kubeint0
+- Adds a blackhole route for 10.200.0.0/24
+- Installs and enables a systemd oneshot service to persist route: ip route add 10.200.0.1 dev kubeint0
 
 ### Files deployed:
-/etc/systemd/network/10-kubeint0.netdev
-/etc/systemd/network/10-kubeint0.network
-/etc/systemd/system/route-kubeint0.service
+- /etc/systemd/network/10-kubeint0.netdev
+- /etc/systemd/network/10-kubeint0.network
+- /etc/systemd/system/route-kubeint0.service
 
 ### Why:
 Ensures a stable, controlled internal endpoint (10.200.0.1) for Kubernetes API binding/advertising.
@@ -61,38 +60,38 @@ Ensures a stable, controlled internal endpoint (10.200.0.1) for Kubernetes API b
 ## 1_set_system_hostname — Hostname and minimal /etc/hosts
 
 ### What it does:
-Sets hostname: {{ hostname }}
-Replaces /etc/hosts with a minimal IPv4-only mapping:
-{{ public_ip }} {{ hostname }}
-{{ apiserver_advertise_address }} {{ hostname }}
-127.0.0.1 {{ hostname }}
-127.0.0.1 localhost
+- Sets hostname: {{ hostname }}
+- Replaces /etc/hosts with a minimal IPv4-only mapping:
+- {{ public_ip }} {{ hostname }}
+- {{ apiserver_advertise_address }} {{ hostname }}
+- 127.0.0.1 {{ hostname }}
+- 127.0.0.1 localhost
 
 ### Files deployed:
-/etc/hostname (via Ansible module)
-/etc/hosts (full overwrite)
+- /etc/hostname (via Ansible module)
+- /etc/hosts (full overwrite)
 
 
 ## 2_python_setup — Python and automation dependencies
 
 ### What it does:
 Installs Python 3 + pip and a set of packages used for Kubernetes and automation tooling:
-python3, python3-pip, python3-venv
-python3-kubernetes, python3-openshift, python3-yaml, python3-jsonpatch
-python3-requests, python3-passlib
-DB/queue libs: python3-psycopg2, python3-redis
-python3-docker
+- python3, python3-pip, python3-venv
+- python3-kubernetes, python3-openshift, python3-yaml, python3-jsonpatch
+- python3-requests, python3-passlib
+- DB/queue libs: python3-psycopg2, python3-redis
+- python3-docker
 
 
 ## 3_base_packages — Core OS tooling for ops/debug
 
 ### What it does:
 Installs common operational utilities:
-diagnostics/network: net-tools, traceroute, mtr, dnsutils, iperf3, tcpdump, ethtool
-json/cli: jq
-crypto/certs: openssl, ca-certificates, gnupg2
-k8s prereqs: conntrack, socat, ebtables, iptables
-utils/editors: git, nano, rsync, archives tooling
+- diagnostics/network: net-tools, traceroute, mtr, dnsutils, iperf3, tcpdump, ethtool
+- json/cli: jq
+- crypto/certs: openssl, ca-certificates, gnupg2
+- k8s prereqs: conntrack, socat, ebtables, iptables
+- utils/editors: git, nano, rsync, archives tooling
 
 
 ## 4_prepare_host_for_k8s — Kernel modules, sysctl, swap disable
