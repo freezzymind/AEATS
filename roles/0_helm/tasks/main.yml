@@ -12,7 +12,6 @@
     url: https://get.helm.sh/helm-v3.14.0-linux-amd64.tar.gz
     dest: /tmp/helm.tar.gz
     mode: '0644'
-    checksum: "sha256:e813c6ea8a365d9d4e7efd4112d9fccc45c9fb86c8c2e87f2e49dda285e2b228"
 
 - name: Extract Helm binary
   ansible.builtin.unarchive:
